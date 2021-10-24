@@ -151,3 +151,7 @@ input {
 video {
 	width: 300px;
 }
+
+.special-icons {
+	width: 100% !important;
+}

@@ -36,20 +36,36 @@ const AppProcess = (() => {
     local_div = document.getElementById('localVideoPlayer');
   }
 
+  const loadAudio = async () => {
+    try {
+      let atream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+      audio = atream.getAudioTracks()[0];
+      audio.enabled = false;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+
   const eventProcess = async () => {
-    $('#micMuteUnmute').on('click', () => {
+    $('#micMuteUnmute').on('click', async () => {
+
+      if (!audio) {
+        await loadAudio();
+      }
+
       if (!audio) {
         alert("Audio permission has not granted")
         return;
       }
       if (isAudioMute) {
         audio.enabled = true;
-        $(this).html("<span class='material-icons'>mic_on</span>")
+        $("#micMuteUnmute").html("<span class='material-icons special-icons'>mic</span>")
         updateMediaSenders(audio, rtp_aud_senders);
       } else {
         audio.enabled = false;
-        $(this).html("<span class='material-icons'>mic_off</span>")
-        remove(rtp_aud_senders);
+        $("#micMuteUnmute").html("<span class='material-icons special-icons'>mic_off</span>")
+        removeMediaSenders(rtp_aud_senders);
       }
 
       isAudioMute = !isAudioMute;
@@ -72,6 +88,7 @@ const AppProcess = (() => {
     })
   }
 
+
   const connection_status = (connection) => {
     if (connection && (connection.connectionState == "new" || connection.connectionState == "connecting" || connection.connectionState == "connected")) {
       return true;
@@ -92,25 +109,70 @@ const AppProcess = (() => {
     }
   }
 
+  const removeMediaSenders = (rtp_senders) => {
+    for (var conId in peers_connection_ids) {
+      if (rtp_senders[conId] && connection_status(peer_connection[conId])) {
+        peer_connection[conId].removeTrack(rtp_senders[conId]);
+        rtp_senders[conId] = null;
+      }
+    }
+  }
+
+  const removeVideoStream = async = (rtp_vid_senders) => {
+    if (videoCamTrack) {
+      videoCamTrack.stop();
+      videoCamTrack = null;
+      local_div.srcObject = null;
+      removeMediaSenders(rtp_vid_senders);
+    }
+  }
+
   const videoProcess = async (newVideoState) => {
+    if (newVideoState == video_states.None) {
+      $("#videoCamOnOff").html("<span class='material-icons special-icons'>videocam_off</span>")
+      $("#ScreenShareOnOff").html(
+        "<span class='material-icons special-icons'>present_to_all</span><div>Present Now</div>"
+      )
+      video_state = newVideoState
+      removeVideoStream(rtp_vid_senders);
+      return
+    }
+
+    if (newVideoState == video_states.Camera) {
+      $("#videoCamOnOff").html("<span class='material-icons special-icons''>videocam_on</span>")
+    }
+
     let vstream = null;
     try {
       if (newVideoState === video_states.Camera) {
         vstream = await navigator.mediaDevices.getUserMedia({
           video: {
-            width: { min: 640, ideal: 1280, max: 1920 },
-            height: { min: 480, ideal: 720, max: 1080 },
+            width: 1920,
+            height: 1080
           },
           audio: false
         });
       } else if (newVideoState === video_states.ScreenShare) {
         vstream = await navigator.mediaDevices.getDisplayMedia({
           video: {
-            width: { min: 640, ideal: 1280, max: 1920 },
-            height: { min: 480, ideal: 720, max: 1080 },
+            width: 1920,
+            height: 1080
           },
           audio: false
         });
+        vstream.oninactive = () => {
+          removeVideoStream(rtp_vid_senders);
+          $("#ScreenShareOnOff").html(
+            "<span class='material-icons special-icons'>present_to_all</span><div>Present Now</div>"
+          )
+        }
+      }
+      if (vstream && vstream.getVideoTracks().length > 0) {
+        videoCamTrack = vstream.getVideoTracks()[0];
+        if (videoCamTrack) {
+          local_div.srcObject = new MediaStream([videoCamTrack]);
+          updateMediaSenders(videoCamTrack, rtp_vid_senders);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -119,13 +181,16 @@ const AppProcess = (() => {
 
     video_state = newVideoState;
 
-    if (vstream && vstream.getVideoTracks().length > 0) {
-      videoCamTrack = vstream.getVideoTracks()[0];
-      if (videoCamTrack) {
-        local_div.srcObject = new MediaStream([videoCamTrack]);
-        updateMediaSenders(videoCamTrack, rtp_vid_senders);
-      }
-
+    if (newVideoState == video_states.Camera) {
+      $("#videoCamOnOff").html(
+        "<span class='material-icons special-icons'>videocam</span>"
+      )
+      $("#ScreenShareOnOff").html(
+        "<span class='material-icons special-icons'>present_to_all</span><div>Present Now</div>"
+      )
+    } else if (newVideoState == video_states.ScreenShare) {
+      $("#ScreenShareOnOff").html("<span class='material-icons text-success'>present_to_all</span><div class='text-success'>Stop Presenting</div>")
+      $("#videoCamOnOff").html("<span class='material-icons special-icons'>videocam_off</span>")
     }
   }
 
