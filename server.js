@@ -4,7 +4,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 
 const io = require("socket.io")(
-  app.listen(3000, () => {
+  app.listen(process.env.PORT || 3000, () => {
     console.log("listening on 3000");
   }),
   {
