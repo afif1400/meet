@@ -1,176 +1,176 @@
 body {
-  font-family: "Roboto", "Lato" !important;
-  font-size: large;
-  background: #222;
+	font-family: "Roboto", "Lato" !important;
+	font-size: large;
+	background: #222;
 }
 
 .logo {
-  height: 43px;
+	height: 43px;
 }
 
 .navbar-brand {
-  font-size: 27px;
-  padding-left: 10px !important;
-  font-family: "Lato";
+	font-size: 27px;
+	padding-left: 10px !important;
+	font-family: "Lato";
 }
 
 .nav-item a {
-  color: gray !important;
-  font-size: 16px;
-  padding: 0 10px;
-  font-weight: 600;
+	color: gray !important;
+	font-size: 16px;
+	padding: 0 10px;
+	font-weight: 600;
 }
 
 .display-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 li.nav-item {
-  padding: 0 10px;
+	padding: 0 10px;
 }
 
 .jumbotron .container {
-  margin-top: 2rem !important;
+	margin-top: 2rem !important;
 }
 
 .signin-image {
-  height: 390px;
-  border-radius: 6px;
-  box-shadow: 1px 1px 16px 0px #000000;
+	height: 390px;
+	border-radius: 6px;
+	box-shadow: 1px 1px 16px 0px #000000;
 }
 
 ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0;
 }
 
 textarea:focus,
 input:focus,
 input {
-  outline: none !important;
+	outline: none !important;
 }
 
 input {
-  border: none;
+	border: none;
 }
 
 .cursor-pointer {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .jumbotron {
-  background-color: #ffffff;
+	background-color: #ffffff;
 }
 
 .jumbotron .container {
-  padding: 3rem;
+	padding: 3rem;
 }
 
 /* index-page */
 
 .home-wrap {
-  background-color: rgb(31, 30, 30);
+	background-color: rgb(31, 30, 30);
 }
 
 .g-top {
-  height: 89vh;
-  position: relative;
+	height: 89vh;
+	position: relative;
 }
 
 .video-wrap {
-  height: 500px;
+	height: 500px;
 }
 
 .video-wrap > * {
-  flex: 1 1 250px;
-  margin: 8px;
-  background-color: #000000;
-  border-radius: 6px;
+	flex: 1 1 250px;
+	margin: 8px;
+	background-color: #000000;
+	border-radius: 6px;
 }
 
 .g-top-left {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 8vh;
-  border-bottom-left-radius: 10px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 8vh;
+	border-bottom-left-radius: 10px;
 }
 
 .top-left-participant-wrap {
-  position: relative;
+	position: relative;
 }
 
 .cursor-pointer {
-  cursor: pointer;
-  padding: 6px;
+	cursor: pointer;
+	padding: 6px;
 }
 
 .cursor-pointer:hover {
-  background-color: #e9e9e9;
-  border-radius: 5px;
+	background-color: #e9e9e9;
+	border-radius: 5px;
 }
 
 .top-left-participant-count {
-  position: absolute;
-  top: -2px;
-  right: -3px;
-  font-size: 15px;
+	position: absolute;
+	top: -2px;
+	right: -3px;
+	font-size: 15px;
 }
 
 .g-bottom {
-  width: 100%;
-  height: 100%;
-  padding: 2px 20px;
-  z-index: 2;
-  background: transparent;
+	width: 100%;
+	height: 100%;
+	padding: 2px 20px;
+	z-index: 2;
+	background: transparent;
 }
 
 .botton-left {
-  position: relative;
-  padding: 5px;
+	position: relative;
+	padding: 5px;
 }
 
 .action-icon-style {
-  height: 40px;
-  width: 40px;
-  border: 1px solid lightgray;
-  border-radius: 50%;
-  font-size: 8px !important;
+	height: 40px;
+	width: 40px;
+	border: 1px solid lightgray;
+	border-radius: 50%;
+	font-size: 8px !important;
 }
 
 .top-remote-video-show-wrap {
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
 }
 
 video {
-  width: 300px;
+	width: 300px;
 }
 
 .special-icons {
-  width: 100% !important;
+	width: 100% !important;
 }
 
 .active {
-  background-color: #f0f0f0;
-  border-radius: 4px !important;
+	background-color: #dfdfdf;
+	border-radius: 4px !important;
 }
 
 .top-box {
-  background-color: #222;
-  position: fixed;
-  width: 30%;
-  height: 20%;
-  top: 20.5%;
-  left: 35.5%;
-  display: block;
-  box-shadow: 0 0 5px #fff;
-  z-index: 999;
-  columns: #fff;
+	background-color: #222;
+	position: fixed;
+	width: 30%;
+	height: 20%;
+	top: 20.5%;
+	left: 35.5%;
+	display: block;
+	box-shadow: 0 0 5px #fff;
+	z-index: 999;
+	columns: #fff;
 }
 
 .meeting-details-button:hover,
@@ -179,28 +179,33 @@ video {
 .video-toggle-wrap,
 .present-now-wrap,
 .option-wrap {
-  /* color: #222; */
-  background-color: transparent !important;
+	/* color: #222; */
+	background-color: transparent !important;
 }
 
 .bottom-left {
-  position: relative;
-  padding: 5px;
+	position: relative;
+	padding: 5px;
 }
 
 .g-details {
-  position: absolute;
-  width: 30vw;
-  background-color: #fff;
-  margin-top: -135px;
-  padding: 5px;
-  border-radius: 5px;
+	position: absolute;
+	width: 30vw;
+	background-color: #fff;
+	margin-top: -135px;
+	padding: 5px;
+	border-radius: 5px;
 }
+
+.g-details-heading {
+	padding-bottom: 5px;
+}
+
 .g-details-heading-show {
-  font-size: 14px;
-  padding-left: 10px;
+	font-size: 14px;
+	padding-left: 10px;
 }
 
 .g-right-details-wrap {
-  border-bottom-left-radius: 10px;
+	border-bottom-left-radius: 10px;
 }

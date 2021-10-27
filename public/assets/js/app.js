@@ -439,11 +439,11 @@ const App = (() => {
       });
       var div = $("<div>").html(
         "<span class='font-weight-bold mr-3' style='color:black'>" +
-          data.from +
-          "</span>" +
-          lTime +
-          "<br>" +
-          data.message
+        data.from +
+        "</span>" +
+        lTime +
+        "<br>" +
+        data.message
       );
       $("#messages").append(div);
     });
@@ -460,11 +460,11 @@ const App = (() => {
       });
       var div = $("<div>").html(
         "<span class='font-weight-bold mr-3' style='color:black'>" +
-          user_id +
-          "</span>" +
-          lTime +
-          "<br>" +
-          $("#msgbox").val()
+        user_id +
+        "</span>" +
+        lTime +
+        "<br>" +
+        $("#msgbox").val()
       );
       $("#messages").append(div);
       $("#msgbox").val("");
@@ -490,10 +490,10 @@ const App = (() => {
     // added Participants
     $(".in-call-wrap-up").append(
       '<div class="in-call-wrap d-flex justify-content-between align-items-center mb-3" id="participant_' +
-        connectionId +
-        '"> <div class="participant-image-name-wrap display-center cursor-pointer" > <div class="participant-image"> <img src="public/assets/images/other.jpg" alt="" class="border border-secondary" style="height: 40px; width: 40px; border-radius: 50%;" /> </div> <div class="participant-name ml-2"> ' +
-        user_id +
-        ' </div> </div> <div class="participant-action-wrap display-center"> <div class="participant-action-dot display-center mr-2 cursor-pointer" > <span class="material-icons">more_vert</span> </div> <div class="participant-action-pin display-center mr-2 cursor-pointer" > <span class="material-icons">push_pin</span> </div> </div> </div>'
+      connectionId +
+      '"> <div class="participant-image-name-wrap display-center cursor-pointer" > <div class="participant-image"> <img src="public/assets/images/other.jpg" alt="" class="border border-secondary" style="height: 40px; width: 40px; border-radius: 50%;" /> </div> <div class="participant-name ml-2"> ' +
+      user_id +
+      ' </div> </div> <div class="participant-action-wrap display-center"> <div class="participant-action-dot display-center mr-2 cursor-pointer" > <span class="material-icons">more_vert</span> </div> <div class="participant-action-pin display-center mr-2 cursor-pointer" > <span class="material-icons">push_pin</span> </div> </div> </div>'
     );
     $(".participant-count").text(userNumber);
   };
@@ -559,6 +559,25 @@ const App = (() => {
     setTimeout(() => {
       $(".link-conf").hide();
     }, 3000);
+  });
+
+
+  $(document).on("click", ".meeting-details-button", () => {
+    $(".g-details").slideToggle(300);
+  });
+
+  $(document).on("click", ".g-details-heading-attachment", function () {
+    $('.g-details-heading-show').hide();
+    $('.g-details-show-attachment').show();
+    $(this).addClass('active');
+    $('.g-details-heading-detail').removeClass('active');
+  });
+
+  $(document).on("click", ".g-details-heading-detail", function () {
+    $('.g-details-show-attachment').hide();
+    $('.g-details-heading-show').show();
+    $(this).addClass('active');
+    $('.g-details-heading-attachment').removeClass('active');
   });
 
   return {
