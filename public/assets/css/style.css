@@ -195,6 +195,7 @@ video {
 	margin-top: -135px;
 	padding: 5px;
 	border-radius: 5px;
+	bottom: 10vh;
 }
 
 .g-details-heading {
@@ -208,4 +209,10 @@ video {
 
 .g-right-details-wrap {
 	border-bottom-left-radius: 10px;
+}
+
+.recording-show {
+	position: absolute;
+	margin-bottom: 132px;
+	display: none;
 }

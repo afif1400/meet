@@ -363,9 +363,12 @@ const AppProcess = (() => {
 })();
 
 const App = (() => {
+  let meeting_id;
+  let user_id;
+
   const init = (uid, mid) => {
-    const user_id = uid;
-    const meeting_id = mid;
+    user_id = uid;
+    meeting_id = mid;
     $("#meetingContainer").show();
     $("#me h2").text(user_id + "(me)");
     document.title = user_id;
@@ -447,6 +450,18 @@ const App = (() => {
       );
       $("#messages").append(div);
     });
+
+    socket.on("showFileMessage", (data) => {
+      var time = new Date();
+      var lTime = time.toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+
+      var attachFileAreaForOther = document.querySelector(".show-attach-file");
+      attachFileAreaForOther.innerHTML = "<div class='left-align' style='display: flex; align-items:center;'><img src='public/assets/images/other.jpg' style='height: 40px;width: 40px;' class='caller-image circle'><div style='font-weight:600;margin: 0 5px;'>" + data.username + "</div>:<div><a style='color:#007bff;' href='" + data.filePath + "' download>" + data.fileName + "</a></div></div><br/>";
+    })
   };
 
   const eventHandling = (user_id) => {
@@ -511,14 +526,17 @@ const App = (() => {
     $(".chat-heading").addClass("active");
     $(".people-heading").removeClass("active");
   });
+
   $(document).on("click", ".meeting-heading-cross", () => {
     $(".g-right-details-wrap").hide(300);
   });
+
   $(document).on("click", ".top-left-participant-wrap", () => {
     $(".g-right-details-wrap").show(300);
     $(".in-call-wrap-up").show(300);
     $(".chat-show-wrap").hide(300);
   });
+
   $(document).on("click", ".top-left-chat-wrap", () => {
     $(".g-right-details-wrap").show(300);
     $(".in-call-wrap-up").hide(300);
@@ -531,7 +549,7 @@ const App = (() => {
         display: "block",
       })
       .html(
-        '<div class="top-box align-vertical-middle profile-dialog-show"> <h4 class="mt-2 mb-4" style="text-align:center; color:#fff">Leave Meeting</h4> <div class="call-leave-cancel-action d-flex justify-content-center align-items-center w-100" > <a href="/action.html"> <button class="call-leave-action btn btn-danger mr-5"> Leave </button> </a> <button class="call-cancel-action btn btn-secondary">cancel</button> </div> </div>'
+        '<div class="top-box align-vertical-middle profile-dialog-show"> <h4 class="mt-2 mb-4" style="text-align:center; color:#fff">Leave Meeting</h4> <div class="call-leave-cancel-action d-flex justify-content-center align-items-center w-100" > <a href="/landing.html"> <button class="call-leave-action btn btn-danger mr-5"> Leave </button> </a> <button class="call-cancel-action btn btn-secondary">cancel</button> </div> </div>'
       );
   });
 
@@ -579,6 +597,106 @@ const App = (() => {
     $(this).addClass('active');
     $('.g-details-heading-attachment').removeClass('active');
   });
+
+  var base_url = window.location.origin;
+
+  $(document).on('change', '.custom-file-input', function () {
+    var fileName = $(this).val().split('\\').pop();
+    $(this).siblings('.custom-file-label').addClass("selected").html(fileName);
+  })
+
+  $(document).on('click', '.share-attach', (e) => {
+    e.preventDefault();
+
+    var image_att = $('#customFile').prop('files')[0];
+    var formData = new FormData();
+    formData.append('zipfile', image_att);
+    formData.append('meeting_id', meeting_id)
+    formData.append('username', user_id)
+    console.log(formData);
+    $.ajax({
+      url: base_url + '/api/attach',
+      type: 'POST',
+      data: formData,
+      contentType: false,
+      processData: false,
+      success: function (data) {
+        console.log(data);
+      },
+      error: function (data) {
+        console.log(data);
+      }
+    })
+
+    var attachFileArea = document.querySelector('.show-attach-file');
+    var attachFileName = $("#customFile").val().split('\\').pop();
+    var attachFilePath = "public/attachment/" + meeting_id + "/" + attachFileName;
+    attachFileArea.innerHTML = "<div class='left-align' style='display: flex; align-items:center;'><img src='public/assets/images/other.jpg' style='height: 40px;width: 40px;' class='caller-image circle'><div style='font-weight:600;margin: 0 5px;'>" + user_id + "</div>:<div><a style='color:#007bff;' href='" + attachFilePath + "' download>" + attachFileName + "</a></div></div><br/>";
+    $('.custom-file-lable').text('');
+    socket.emit('file-transfer-to-other', {
+      username: user_id,
+      meetingId: meeting_id,
+      fileName: attachFileName,
+      filePath: attachFilePath
+    })
+  })
+
+  $(document).on('click', '.option-icon', (e) => {
+    $('.recording-show').slideToggle(300)
+  })
+
+  $(document).on('click', '.start-record', function () {
+    $(this).removeClass().addClass('stop-record btn btn-danger text-light').text('Stop Recording');
+    startRecording()
+  })
+
+  $(document).on('click', '.stop-record', function () {
+    $(this).removeClass().addClass('start-record btn btn-dark text-danger').text('Start Recording');
+    mediaRecorder.stop();
+  })
+
+  var mediaRecorder;
+  var chunks = [];
+
+  const captureScreen = async (mediaConstraints = { video: true }) => {
+    const screenStream = await navigator.mediaDevices.getDisplayMedia(mediaConstraints);
+    return screenStream
+  }
+
+  const captureAudio = async (mediaConstraints = { video: false, audio: true }) => {
+    const audioStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+    return audioStream
+  }
+
+
+  const startRecording = async () => {
+    const screenStream = await captureScreen();
+    const audioStream = await captureAudio();
+    const stream = new MediaStream([...screenStream.getTracks(), ...audioStream.getTracks()])
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.start();
+
+    mediaRecorder.onstop = (e) => {
+      var clipName = prompt("Enter a name for your recording");
+      stream.getTracks().forEach(track => track.stop());
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = clipName + '.webm';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    }
+
+    mediaRecorder.ondataavailable = (e) => {
+      chunks.push(e.data);
+    }
+  }
 
   return {
     _init: (uid, mid) => {

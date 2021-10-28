@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const bodyParser = require("body-parser");
+const { json } = require("body-parser");
+const fs = require("fs");
+const fileUpload = require("express-fileupload");
 
 const io = require("socket.io")(
   app.listen(process.env.PORT || 3000, () => {
@@ -11,6 +13,8 @@ const io = require("socket.io")(
     allowEIO3: true,
   }
 );
+
+app.use(json());
 
 app.use(express.static(path.join(__dirname, "")));
 
@@ -80,5 +84,42 @@ io.on("connection", (socket) => {
         });
       });
     }
+  }); socket.on("file-transfer-to-other", (data) => {
+    const { username, meetingId, fileName, filePath } = data
+    var mUser = users.find((user) => user.connectionId == socket.id);
+    if (mUser) {
+      var meetingid = mUser.meeting_id;
+      var from = mUser.user_id;
+      var others = users.filter((user) => user.meeting_id === meetingid);
+      others.forEach((user) => {
+        socket.to(user.connectionId).emit("showFileMessage", {
+          username,
+          meetingId,
+          fileName,
+          filePath
+        });
+      });
+    }
   });
+
 });
+
+app.use(fileUpload());
+
+app.post('/api/attach', (req, res) => {
+  const data = req.body;
+  var imageFile = req.files.zipfile;
+
+  var dir = "public/attachment/" + data.meeting_id + "/"
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+
+  imageFile.mv(dir + imageFile.name, function (err) {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    res.status(200).send('File uploaded!');
+  }
+  );
+})
